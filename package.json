@@ -1,0 +1,10 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "description": "It is a sample",
+  "author": "Your name",
+  "keywords": "command",
+  "repository": "http://github.com/viniciuschiele/sample",
+  "runtime": "bash",
+  "main": "main.sh"
+}
