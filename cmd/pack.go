@@ -10,7 +10,7 @@ import (
 func init() {
 	var packCommand = &cobra.Command{
 		Use:   "pack",
-		Short: "Zip a package folder into a Tarball file",
+		Short: "Pack a package folder into a Tarball file",
 		Run: func(cmd *cobra.Command, args []string) {
 			inputPath := "."
 

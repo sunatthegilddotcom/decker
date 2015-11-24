@@ -10,7 +10,7 @@ import (
 func init() {
 	var checkCommand = &cobra.Command{
 		Use:   "check",
-		Short: "Check whether a package contains the required files",
+		Short: "Check whether a package folder contains the required files",
 		Run: func(cmd *cobra.Command, args []string) {
 			inputPath := "."
 
