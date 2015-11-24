@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"os"
 	"path"
 
@@ -51,7 +52,7 @@ func (p *Package) ReadFromFile(input string) error {
 
 // WriteToFile ...
 func (p *Package) WriteToFile(output string) error {
-	fileName := path.Join(output, "package.json")
+	fileName := path.Join(output, PackageFile)
 
 	if stat, _ := os.Stat(fileName); stat != nil {
 		return nil
@@ -116,7 +117,9 @@ func (p *PackageManager) Init(output string) error {
 		return err
 	}
 
-	os.Mkdir(path.Join(output, "bin"), 0777)
+	binPath := path.Join(output, "bin")
+
+	os.Mkdir(binPath, 0777)
 
 	spec := new(Package)
 	spec.Name = path.Base(output)
@@ -128,6 +131,8 @@ func (p *PackageManager) Init(output string) error {
 	spec.Runtime = "bash"
 	spec.Main = spec.Name + ".sh"
 	spec.WriteToFile(output)
+
+	ioutil.WriteFile(path.Join(binPath, spec.Main), []byte("#!/bin/bash\n\necho \"hello\""), 0777)
 
 	return nil
 }
