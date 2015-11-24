@@ -18,7 +18,11 @@ func init() {
 			}
 
 			packageManager := core.PackageManager{}
-			packageManager.Create(args[0])
+			err := packageManager.Create(args[0])
+
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 		},
 	}
 

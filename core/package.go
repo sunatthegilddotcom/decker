@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"os"
-	"os/user"
 	"path"
 )
 
@@ -46,11 +45,11 @@ type PackageManager struct {
 }
 
 // Create ...
-func (p *PackageManager) Create(output string) {
+func (p *PackageManager) Create(output string) error {
 	err := os.MkdirAll(output, 0777)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	os.Mkdir(path.Join(output, "bin"), 0777)
@@ -59,20 +58,12 @@ func (p *PackageManager) Create(output string) {
 	spec.Name = path.Base(output)
 	spec.Version = "0.0.0"
 	spec.Description = "A short description of your package"
-	spec.Author = p.guessAuthor()
-	spec.Keywords = []string{"a", "b"}
+	spec.Author = GetOSUserFullname()
+	spec.Keywords = []string{}
 	spec.Repository = "https://github.com/godecker/" + spec.Name
 	spec.Runtime = "bash"
 	spec.Main = spec.Name
 	spec.WriteToFile(output)
-}
 
-func (p *PackageManager) guessAuthor() string {
-	currentUser, _ := user.Current()
-
-	if currentUser == nil {
-		return ""
-	}
-
-	return currentUser.Name
+	return nil
 }
