@@ -1,2 +1,3 @@
 #!/bin/bash
-go install -a && $GOPATH/bin/decker-cli $@
+rm -rf $GOPATH/bin/decker-cli
+go install && $GOPATH/bin/decker-cli $@
