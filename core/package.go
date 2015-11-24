@@ -108,8 +108,8 @@ func (p *Package) Validate() error {
 type PackageManager struct {
 }
 
-// Create ...
-func (p *PackageManager) Create(output string) error {
+// Init ...
+func (p *PackageManager) Init(output string) error {
 	err := os.MkdirAll(output, 0777)
 
 	if err != nil {
