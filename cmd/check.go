@@ -18,8 +18,7 @@ func init() {
 				inputPath = args[0]
 			}
 
-			packageManager := core.PackageManager{}
-			err := packageManager.Check(inputPath)
+			err := core.CheckPackage(inputPath)
 
 			if err != nil {
 				fmt.Println(err)
@@ -27,5 +26,5 @@ func init() {
 		},
 	}
 
-	RootCmd.AddCommand(checkCommand)
+	rootCmd.AddCommand(checkCommand)
 }

@@ -105,12 +105,8 @@ func (p *Package) Validate() error {
 	return nil
 }
 
-// PackageManager ...
-type PackageManager struct {
-}
-
-// Init ...
-func (p *PackageManager) Init(output string) error {
+// InitPackage ...
+func InitPackage(output string) error {
 	err := os.MkdirAll(output, 0777)
 
 	if err != nil {
@@ -137,8 +133,8 @@ func (p *PackageManager) Init(output string) error {
 	return nil
 }
 
-// Check ...
-func (p *PackageManager) Check(inputPath string) error {
+// CheckPackage ...
+func CheckPackage(inputPath string) error {
 	jsonPath := path.Join(inputPath, PackageFile)
 
 	success, err := IsFile(jsonPath)
@@ -188,9 +184,9 @@ func (p *PackageManager) Check(inputPath string) error {
 	return nil
 }
 
-// Pack ...
-func (p *PackageManager) Pack(inputPath string, outputPath string) (fileName string, err error) {
-	err = p.Check(inputPath)
+// PackPackage ...
+func PackPackage(inputPath string, outputPath string) (fileName string, err error) {
+	err = CheckPackage(inputPath)
 
 	if err != nil {
 		return

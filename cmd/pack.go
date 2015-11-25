@@ -18,8 +18,7 @@ func init() {
 				inputPath = args[0]
 			}
 
-			packageManager := core.PackageManager{}
-			fileName, err := packageManager.Pack(inputPath, ".")
+			fileName, err := core.PackPackage(inputPath, ".")
 
 			if err == nil {
 				fmt.Println("Package has been created: " + fileName)
@@ -29,5 +28,5 @@ func init() {
 		},
 	}
 
-	RootCmd.AddCommand(packCommand)
+	rootCmd.AddCommand(packCommand)
 }

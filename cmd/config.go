@@ -102,5 +102,5 @@ func init() {
 	configCommand.AddCommand(delCommand)
 	configCommand.AddCommand(getCommand)
 	configCommand.AddCommand(setCommand)
-	RootCmd.AddCommand(configCommand)
+	rootCmd.AddCommand(configCommand)
 }

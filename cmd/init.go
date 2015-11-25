@@ -17,8 +17,7 @@ func init() {
 				return
 			}
 
-			packageManager := core.PackageManager{}
-			err := packageManager.Init(args[0])
+			err := core.InitPackage(args[0])
 
 			if err != nil {
 				fmt.Println(err.Error())
@@ -26,5 +25,5 @@ func init() {
 		},
 	}
 
-	RootCmd.AddCommand(initCreate)
+	rootCmd.AddCommand(initCreate)
 }

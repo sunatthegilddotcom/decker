@@ -17,7 +17,7 @@ func init() {
 
 	var loginCommand = &cobra.Command{
 		Use:   "login",
-		Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/v1/\" is the default.",
+		Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
 		Run: func(cmd *cobra.Command, args []string) {
 			service := "https://registry.godecker.io/v1/"
 
@@ -47,8 +47,7 @@ func init() {
 				password = string(passwordInBytes)
 			}
 
-			authManager := core.AuthManager{}
-			err := authManager.Login(username, password, service)
+			err := core.Login(username, password, service)
 
 			if err != nil {
 				fmt.Println(err)
@@ -62,5 +61,5 @@ func init() {
 	loginCommand.Flags().StringVarP(&username, "username", "u", "", "Username")
 	loginCommand.Flags().StringVarP(&password, "password", "p", "", "Password")
 
-	RootCmd.AddCommand(loginCommand)
+	rootCmd.AddCommand(loginCommand)
 }
