@@ -17,8 +17,8 @@ var delConfigCommand = &cobra.Command{
 	Use:   "del <key>",
 	Short: "Delete a global option",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return errors.New("no key provided")
+		if len(args) == 0 {
+			return errors.New("You must specify a key")
 		}
 
 		config, err := core.GetConfig()
@@ -41,8 +41,8 @@ var getConfigCommand = &cobra.Command{
 	Use:   "get <key>",
 	Short: "Get a global option",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return errors.New("no key provided")
+		if len(args) == 0 {
+			return errors.New("You must specify a key")
 		}
 
 		config, err := core.GetConfig()
@@ -67,8 +67,8 @@ var setConfigCommand = &cobra.Command{
 	Use:   "set <key> <value>",
 	Short: "Set a global option",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 2 {
-			return errors.New("no key provided")
+		if len(args) < 2 {
+			return errors.New("You must specify a key and value")
 		}
 
 		config, err := core.GetConfig()

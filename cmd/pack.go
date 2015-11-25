@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -11,13 +12,11 @@ var packCommand = &cobra.Command{
 	Use:   "pack",
 	Short: "Pack a package folder into a Tarball file",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		inputPath := "."
-
-		if len(args) > 0 {
-			inputPath = args[0]
+		if len(args) == 0 {
+			return errors.New("You must specify a path for a package")
 		}
 
-		fileName, err := core.PackPackage(inputPath, ".")
+		fileName, err := core.PackPackage(args[0], ".")
 
 		if err != nil {
 			return err
