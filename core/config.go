@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"os"
 	"path"
@@ -10,73 +9,80 @@ import (
 )
 
 const (
-	// DeckerFile ...
-	DeckerFile = ".decker"
+	// DefaultService has the public registry url
+	DefaultService = "http://registry.godecker.io/"
 )
 
-// Config ...
-type Config struct {
-	Token   string `json:"token,omitempty"`
-	Service string `json:"service,omitempty"`
-}
+var configFile string
+var configDefaults map[string]string
+var configOverride map[string]string
 
-// Get ...
-func (c *Config) Get(key string) (string, error) {
-	switch strings.ToLower(key) {
-	case "token":
-		return c.Token, nil
-	case "service":
-		return c.Service, nil
-	default:
-		return "", errors.New(key + " is an invalid key")
-	}
-}
-
-// Set ...
-func (c *Config) Set(key, value string) error {
-
-	switch strings.ToLower(key) {
-	case "token":
-		c.Token = value
-	case "service":
-		c.Service = value
-	default:
-		return errors.New(key + " is an invalid key")
-	}
-
-	return nil
-}
-
-// GetConfig ...
-func GetConfig() (*Config, error) {
-	config := new(Config)
-
-	file, err := os.Open(path.Join(os.Getenv("HOME"), DeckerFile))
+// LoadConfig ...
+func LoadConfig() error {
+	file, err := os.Open(configFile)
 
 	if os.IsNotExist(err) {
-		return config, nil
+		return nil
 	}
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	err = decoder.Decode(config)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return config, nil
+	return decoder.Decode(&configOverride)
 }
 
 // SaveConfig ...
-func SaveConfig(config *Config) error {
-	b, _ := json.MarshalIndent(config, "", "  ")
+func SaveConfig() error {
+	b, _ := json.MarshalIndent(configOverride, "", "  ")
+	return ioutil.WriteFile(configFile, b, 0777)
+}
 
-	configPath := path.Join(os.Getenv("HOME"), DeckerFile)
-	return ioutil.WriteFile(configPath, b, 0777)
+// GetConfigValue ...
+func GetConfigValue(key string) (string, bool) {
+	defaultValue, found := configDefaults[key]
+
+	if !found {
+		return "", false
+	}
+
+	value, _ := configOverride[key]
+
+	if strings.Trim(value, " ") == "" {
+		value = defaultValue
+	}
+
+	return value, true
+}
+
+// SetConfigValue ...
+func SetConfigValue(key, value string) bool {
+	_, found := configDefaults[key]
+
+	if !found {
+		return false
+	}
+
+	value = strings.Trim(value, " ")
+
+	if value != "" {
+		configOverride[key] = value
+	} else {
+		delete(configOverride, key)
+	}
+
+	return true
+}
+
+func init() {
+	configFile = path.Join(os.Getenv("HOME"), ".decker")
+
+	configDefaults = make(map[string]string)
+	configOverride = make(map[string]string)
+
+	configDefaults["token"] = ""
+	configDefaults["service"] = DefaultService
 }

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/viniciuschiele/decker/core"
 )
 
 var rootCmd = &cobra.Command{
@@ -16,4 +17,8 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
 	}
+}
+
+func init() {
+	core.LoadConfig()
 }

@@ -21,19 +21,11 @@ var delConfigCommand = &cobra.Command{
 			return errors.New("You must specify a key")
 		}
 
-		config, err := core.GetConfig()
-
-		if err != nil {
-			return err
+		if !core.SetConfigValue(args[0], "") {
+			return errors.New(args[0] + " is a invalid key")
 		}
 
-		err = config.Set(args[0], "")
-
-		if err != nil {
-			return err
-		}
-
-		return core.SaveConfig(config)
+		return core.SaveConfig()
 	},
 }
 
@@ -45,16 +37,10 @@ var getConfigCommand = &cobra.Command{
 			return errors.New("You must specify a key")
 		}
 
-		config, err := core.GetConfig()
+		value, found := core.GetConfigValue(args[0])
 
-		if err != nil {
-			return err
-		}
-
-		value, err := config.Get(args[0])
-
-		if err != nil {
-			return err
+		if !found {
+			return errors.New(args[0] + " is a invalid key")
 		}
 
 		fmt.Println(value)
@@ -71,19 +57,11 @@ var setConfigCommand = &cobra.Command{
 			return errors.New("You must specify a key and value")
 		}
 
-		config, err := core.GetConfig()
-
-		if err != nil {
-			return err
+		if !core.SetConfigValue(args[0], args[1]) {
+			return errors.New(args[0] + " is a invalid key")
 		}
 
-		err = config.Set(args[0], args[1])
-
-		if err != nil {
-			return err
-		}
-
-		return core.SaveConfig(config)
+		return core.SaveConfig()
 	},
 }
 
