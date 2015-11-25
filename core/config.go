@@ -20,6 +20,18 @@ type Config struct {
 	Service string `json:"service,omitempty"`
 }
 
+// Get ...
+func (c *Config) Get(name string) (string, error) {
+	switch strings.ToLower(name) {
+	case "token":
+		return c.Token, nil
+	case "service":
+		return c.Service, nil
+	default:
+		return "", errors.New(name + " is an invalid name")
+	}
+}
+
 // Set ...
 func (c *Config) Set(name, value string) error {
 
@@ -38,9 +50,8 @@ func (c *Config) Set(name, value string) error {
 // GetConfig ...
 func GetConfig() (*Config, error) {
 	config := new(Config)
-	configPath := path.Join(os.Getenv("HOME"), DeckerFile)
 
-	file, err := os.Open(configPath)
+	file, err := os.Open(path.Join(os.Getenv("HOME"), DeckerFile))
 
 	if os.IsNotExist(err) {
 		return config, nil
@@ -64,8 +75,8 @@ func GetConfig() (*Config, error) {
 
 // SaveConfig ...
 func SaveConfig(config *Config) error {
-	configPath := path.Join(os.Getenv("HOME"), DeckerFile)
-
 	b, _ := json.MarshalIndent(config, "", "  ")
+
+	configPath := path.Join(os.Getenv("HOME"), DeckerFile)
 	return ioutil.WriteFile(configPath, b, 0777)
 }

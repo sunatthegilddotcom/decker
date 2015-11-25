@@ -3,15 +3,70 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/viniciuschiele/decker/core"
-
 	"github.com/spf13/cobra"
+	"github.com/viniciuschiele/decker/core"
 )
 
 func init() {
 	var configCommand = &cobra.Command{
 		Use:   "config",
-		Short: "get and set options",
+		Short: "Get and Set global options",
+	}
+
+	var delCommand = &cobra.Command{
+		Use:   "del <key>",
+		Short: "Delete a global option",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("config del: expected one argument")
+				return
+			}
+
+			config, err := core.GetConfig()
+
+			if err != nil {
+				panic(err)
+			}
+
+			err = config.Set(args[0], "")
+
+			if err != nil {
+				fmt.Println("config del: " + err.Error())
+				return
+			}
+
+			err = core.SaveConfig(config)
+
+			if err != nil {
+				panic(err)
+			}
+		},
+	}
+
+	var getCommand = &cobra.Command{
+		Use:   "get <key>",
+		Short: "Get a global option",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("config get: expected one argument")
+				return
+			}
+
+			config, err := core.GetConfig()
+
+			if err != nil {
+				panic(err)
+			}
+
+			value, err := config.Get(args[0])
+
+			if err != nil {
+				fmt.Println("config get: " + err.Error())
+				return
+			}
+
+			fmt.Println(value)
+		},
 	}
 
 	var setCommand = &cobra.Command{
@@ -44,6 +99,8 @@ func init() {
 		},
 	}
 
+	configCommand.AddCommand(delCommand)
+	configCommand.AddCommand(getCommand)
 	configCommand.AddCommand(setCommand)
 	RootCmd.AddCommand(configCommand)
 }
