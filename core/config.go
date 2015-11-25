@@ -21,27 +21,27 @@ type Config struct {
 }
 
 // Get ...
-func (c *Config) Get(name string) (string, error) {
-	switch strings.ToLower(name) {
+func (c *Config) Get(key string) (string, error) {
+	switch strings.ToLower(key) {
 	case "token":
 		return c.Token, nil
 	case "service":
 		return c.Service, nil
 	default:
-		return "", errors.New(name + " is an invalid name")
+		return "", errors.New(key + " is an invalid key")
 	}
 }
 
 // Set ...
-func (c *Config) Set(name, value string) error {
+func (c *Config) Set(key, value string) error {
 
-	switch strings.ToLower(name) {
+	switch strings.ToLower(key) {
 	case "token":
 		c.Token = value
 	case "service":
 		c.Service = value
 	default:
-		return errors.New(name + " is an invalid name")
+		return errors.New(key + " is an invalid key")
 	}
 
 	return nil

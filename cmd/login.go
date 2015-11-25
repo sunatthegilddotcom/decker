@@ -14,7 +14,7 @@ import (
 var loginCommand = &cobra.Command{
 	Use:   "login",
 	Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		service := "https://registry.godecker.io/v1/"
 
 		if len(args) > 0 {
@@ -30,7 +30,7 @@ var loginCommand = &cobra.Command{
 			fmt.Printf("Username: ")
 			scanner := bufio.NewScanner(os.Stdin)
 			if !scanner.Scan() {
-				return
+				return nil
 			}
 			username = scanner.Text()
 		}
@@ -41,7 +41,7 @@ var loginCommand = &cobra.Command{
 			fmt.Println()
 
 			if err != nil {
-				return
+				return err
 			}
 			password = string(passwordInBytes)
 		}
@@ -49,11 +49,11 @@ var loginCommand = &cobra.Command{
 		err := core.Login(username, password, service)
 
 		if err != nil {
-			fmt.Println(err)
-			return
+			return err
 		}
 
 		fmt.Println("Welcome!")
+		return nil
 	},
 }
 

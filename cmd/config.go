@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -15,86 +16,74 @@ var configCommand = &cobra.Command{
 var delConfigCommand = &cobra.Command{
 	Use:   "del <key>",
 	Short: "Delete a global option",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			fmt.Println("config del: expected one argument")
-			return
+			return errors.New("no key provided")
 		}
 
 		config, err := core.GetConfig()
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		err = config.Set(args[0], "")
 
 		if err != nil {
-			fmt.Println("config del: " + err.Error())
-			return
+			return err
 		}
 
-		err = core.SaveConfig(config)
-
-		if err != nil {
-			panic(err)
-		}
+		return core.SaveConfig(config)
 	},
 }
 
 var getConfigCommand = &cobra.Command{
 	Use:   "get <key>",
 	Short: "Get a global option",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			fmt.Println("config get: expected one argument")
-			return
+			return errors.New("no key provided")
 		}
 
 		config, err := core.GetConfig()
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		value, err := config.Get(args[0])
 
 		if err != nil {
-			fmt.Println("config get: " + err.Error())
-			return
+			return err
 		}
 
 		fmt.Println(value)
+
+		return nil
 	},
 }
 
 var setConfigCommand = &cobra.Command{
 	Use:   "set <key> <value>",
 	Short: "Set a global option",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 2 {
-			fmt.Println("config set: expected two arguments")
-			return
+			return errors.New("no key provided")
 		}
 
 		config, err := core.GetConfig()
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		err = config.Set(args[0], args[1])
 
 		if err != nil {
-			fmt.Println("config set: " + err.Error())
-			return
+			return err
 		}
 
-		err = core.SaveConfig(config)
-
-		if err != nil {
-			panic(err)
-		}
+		return core.SaveConfig(config)
 	},
 }
 

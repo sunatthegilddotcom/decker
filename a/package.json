@@ -1,0 +1,10 @@
+{
+  "name": "a",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "author": "vinicius",
+  "keywords": [],
+  "repository": "https://github.com/godecker/a",
+  "runtime": "bash",
+  "main": "a.sh"
+}

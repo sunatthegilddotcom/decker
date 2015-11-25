@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/spf13/cobra"
 	"github.com/viniciuschiele/decker/core"
@@ -9,18 +9,13 @@ import (
 
 var initCommand = &cobra.Command{
 	Use:   "init",
-	Short: "Generates code scaffolding for a package",
-	Run: func(cmd *cobra.Command, args []string) {
+	Short: "Creates an empty package",
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			fmt.Println("You must specify a path to initialize a new package")
-			return
+			return errors.New("You must specify a path to initialize a new package")
 		}
 
-		err := core.InitPackage(args[0])
-
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		return core.InitPackage(args[0])
 	},
 }
 

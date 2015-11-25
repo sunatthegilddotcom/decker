@@ -10,7 +10,7 @@ import (
 var packCommand = &cobra.Command{
 	Use:   "pack",
 	Short: "Pack a package folder into a Tarball file",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		inputPath := "."
 
 		if len(args) > 0 {
@@ -19,11 +19,12 @@ var packCommand = &cobra.Command{
 
 		fileName, err := core.PackPackage(inputPath, ".")
 
-		if err == nil {
-			fmt.Println("Package has been created: " + fileName)
-		} else {
-			fmt.Println(err.Error())
+		if err != nil {
+			return err
 		}
+
+		fmt.Println("Package has been created: " + fileName)
+		return nil
 	},
 }
 

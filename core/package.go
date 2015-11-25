@@ -144,7 +144,7 @@ func CheckPackage(inputPath string) error {
 	}
 
 	if !success {
-		return errors.New("package folder: " + PackageFile + " not found")
+		return errors.New(PackageFile + " is missing")
 	}
 
 	binPath := path.Join(inputPath, BinFolder)
