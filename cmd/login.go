@@ -11,55 +11,55 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func init() {
-	var username string
-	var password string
+var loginCommand = &cobra.Command{
+	Use:   "login",
+	Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
+	Run: func(cmd *cobra.Command, args []string) {
+		service := "https://registry.godecker.io/v1/"
 
-	var loginCommand = &cobra.Command{
-		Use:   "login",
-		Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
-		Run: func(cmd *cobra.Command, args []string) {
-			service := "https://registry.godecker.io/v1/"
+		if len(args) > 0 {
+			service = args[0]
+		}
 
-			if len(args) > 0 {
-				service = args[0]
-			}
+		username := cmd.Flag("username").Value.String()
+		password := cmd.Flag("password").Value.String()
 
-			if username == "" {
-				password = ""
+		if username == "" {
+			password = ""
 
-				fmt.Printf("Username: ")
-				scanner := bufio.NewScanner(os.Stdin)
-				if !scanner.Scan() {
-					return
-				}
-				username = scanner.Text()
-			}
-
-			if password == "" {
-				fmt.Printf("Password: ")
-				passwordInBytes, err := terminal.ReadPassword(int(syscall.Stdin))
-				fmt.Println()
-
-				if err != nil {
-					return
-				}
-				password = string(passwordInBytes)
-			}
-
-			err := core.Login(username, password, service)
-
-			if err != nil {
-				fmt.Println(err)
+			fmt.Printf("Username: ")
+			scanner := bufio.NewScanner(os.Stdin)
+			if !scanner.Scan() {
 				return
 			}
+			username = scanner.Text()
+		}
 
-			fmt.Println("Welcome!")
-		},
-	}
+		if password == "" {
+			fmt.Printf("Password: ")
+			passwordInBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+			fmt.Println()
 
-	loginCommand.Flags().StringVarP(&username, "username", "u", "", "Username")
-	loginCommand.Flags().StringVarP(&password, "password", "p", "", "Password")
+			if err != nil {
+				return
+			}
+			password = string(passwordInBytes)
+		}
+
+		err := core.Login(username, password, service)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println("Welcome!")
+	},
+}
+
+func init() {
+	loginCommand.Flags().StringP("username", "u", "", "Username")
+	loginCommand.Flags().StringP("password", "p", "", "Password")
 
 	rootCmd.AddCommand(loginCommand)
 }
