@@ -9,6 +9,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:          "decker",
+	Short:        "Decker script manager powered by https://godecker.io",
 	SilenceUsage: true,
 }
 
@@ -20,5 +21,7 @@ func Execute() {
 }
 
 func init() {
-	core.LoadConfig()
+	if err := core.InitConfig(); err != nil {
+		panic(err)
+	}
 }

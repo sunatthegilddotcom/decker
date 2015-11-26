@@ -5,21 +5,34 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"strings"
 )
 
 const (
-	// DefaultService has the public registry url
-	DefaultService = "http://registry.godecker.io/"
+	// ConfigFileName contains the config file name
+	ConfigFileName = ".decker"
+	// DefaultServer contains the public decker registry
+	DefaultServer = "http://registry.godecker.io/"
 )
 
-var configFile string
-var configDefaults map[string]string
-var configOverride map[string]string
+var (
+	// Config is a singleton instance of ConfigFile
+	Config *ConfigFile
+	// ConfigDir contains the config folder
+	ConfigDir string
+)
 
-// LoadConfig ...
-func LoadConfig() error {
-	file, err := os.Open(configFile)
+// ConfigFile ~/.decker/config.json file info
+type ConfigFile struct {
+	Auths         map[string]string `json:"auths"`
+	DefaultServer string            `json:"defaultServer,omitempty"`
+	filename      string            // Internal use
+}
+
+// InitConfig ...
+func InitConfig() error {
+	Config.filename = path.Join(ConfigDir, ConfigFileName)
+
+	file, err := os.Open(Config.filename)
 
 	if os.IsNotExist(err) {
 		return nil
@@ -32,57 +45,16 @@ func LoadConfig() error {
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	return decoder.Decode(&configOverride)
+	return decoder.Decode(Config)
 }
 
-// SaveConfig ...
-func SaveConfig() error {
-	b, _ := json.MarshalIndent(configOverride, "", "  ")
-	return ioutil.WriteFile(configFile, b, 0777)
-}
-
-// GetConfigValue ...
-func GetConfigValue(key string) (string, bool) {
-	defaultValue, found := configDefaults[key]
-
-	if !found {
-		return "", false
-	}
-
-	value, _ := configOverride[key]
-
-	if strings.Trim(value, " ") == "" {
-		value = defaultValue
-	}
-
-	return value, true
-}
-
-// SetConfigValue ...
-func SetConfigValue(key, value string) bool {
-	_, found := configDefaults[key]
-
-	if !found {
-		return false
-	}
-
-	value = strings.Trim(value, " ")
-
-	if value != "" {
-		configOverride[key] = value
-	} else {
-		delete(configOverride, key)
-	}
-
-	return true
+// Save ...
+func (p *ConfigFile) Save() error {
+	b, _ := json.MarshalIndent(Config, "", "  ")
+	return ioutil.WriteFile(p.filename, b, 0777)
 }
 
 func init() {
-	configFile = path.Join(os.Getenv("HOME"), ".decker")
-
-	configDefaults = make(map[string]string)
-	configOverride = make(map[string]string)
-
-	configDefaults["token"] = ""
-	configDefaults["service"] = DefaultService
+	Config = &ConfigFile{Auths: make(map[string]string, 0)}
+	ConfigDir = os.Getenv("HOME")
 }

@@ -15,10 +15,10 @@ var loginCommand = &cobra.Command{
 	Use:   "login",
 	Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		service := "https://registry.godecker.io/v1/"
+		server := ""
 
 		if len(args) > 0 {
-			service = args[0]
+			server = args[0]
 		}
 
 		username := cmd.Flag("username").Value.String()
@@ -46,13 +46,16 @@ var loginCommand = &cobra.Command{
 			password = string(passwordInBytes)
 		}
 
-		err := core.Login(username, password, service)
+		err := core.Login(username, password, server)
 
 		if err != nil {
 			return err
 		}
 
+		fmt.Println()
 		fmt.Println("Welcome!")
+		fmt.Println()
+
 		return nil
 	},
 }

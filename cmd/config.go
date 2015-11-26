@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -13,61 +12,30 @@ var configCommand = &cobra.Command{
 	Short: "Get and Set global options",
 }
 
-var delConfigCommand = &cobra.Command{
-	Use:   "del <key>",
-	Short: "Delete a global option",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return errors.New("You must specify a key")
-		}
-
-		if !core.SetConfigValue(args[0], "") {
-			return errors.New(args[0] + " is a invalid key")
-		}
-
-		return core.SaveConfig()
+var getServerCommand = &cobra.Command{
+	Use:   "get-server",
+	Short: "get default server",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(core.ResolveServer(""))
 	},
 }
 
-var getConfigCommand = &cobra.Command{
-	Use:   "get <key>",
-	Short: "Get a global option",
+var setServerCommand = &cobra.Command{
+	Use:   "set-server <server>",
+	Short: "Set default server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return errors.New("You must specify a key")
+		core.Config.DefaultServer = ""
+
+		if len(args) > 0 {
+			core.Config.DefaultServer = core.CompactServer(args[0])
 		}
 
-		value, found := core.GetConfigValue(args[0])
-
-		if !found {
-			return errors.New(args[0] + " is a invalid key")
-		}
-
-		fmt.Println(value)
-
-		return nil
-	},
-}
-
-var setConfigCommand = &cobra.Command{
-	Use:   "set <key> <value>",
-	Short: "Set a global option",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 2 {
-			return errors.New("You must specify a key and value")
-		}
-
-		if !core.SetConfigValue(args[0], args[1]) {
-			return errors.New(args[0] + " is a invalid key")
-		}
-
-		return core.SaveConfig()
+		return core.Config.Save()
 	},
 }
 
 func init() {
-	configCommand.AddCommand(delConfigCommand)
-	configCommand.AddCommand(getConfigCommand)
-	configCommand.AddCommand(setConfigCommand)
+	configCommand.AddCommand(getServerCommand)
+	configCommand.AddCommand(setServerCommand)
 	rootCmd.AddCommand(configCommand)
 }
