@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/viniciuschiele/decker/core"
+	"github.com/viniciuschiele/decker/pkg"
 )
 
 var packCommand = &cobra.Command{
@@ -16,7 +16,7 @@ var packCommand = &cobra.Command{
 			return errors.New("You must specify a path for a package")
 		}
 
-		fileName, err := core.PackPackage(args[0], ".")
+		fileName, err := pkg.Pack(args[0], ".")
 
 		if err != nil {
 			return err

@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"path"
 
 	"github.com/spf13/cobra"
-	"github.com/viniciuschiele/decker/core"
+	"github.com/viniciuschiele/decker/config"
 )
 
 var rootCmd = &cobra.Command{
@@ -15,13 +17,14 @@ var rootCmd = &cobra.Command{
 
 //Execute adds all child commands to the root command sets flags appropriately.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	baseDir := path.Join(os.Getenv("HOME"), ".decker")
+
+	if err := config.Init(baseDir); err != nil {
+		fmt.Println(err)
 		os.Exit(-1)
 	}
-}
 
-func init() {
-	if err := core.InitConfig(); err != nil {
-		panic(err)
+	if err := rootCmd.Execute(); err != nil {
+		os.Exit(-1)
 	}
 }

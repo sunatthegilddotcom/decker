@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/spf13/cobra"
-	"github.com/viniciuschiele/decker/core"
+	"github.com/viniciuschiele/decker/pkg"
 )
 
 var checkCommand = &cobra.Command{
@@ -15,7 +15,7 @@ var checkCommand = &cobra.Command{
 			return errors.New("You must specify a path for a package")
 		}
 
-		return core.CheckPackage(args[0])
+		return pkg.Check(args[0])
 	},
 }
 

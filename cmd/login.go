@@ -7,20 +7,15 @@ import (
 	"syscall"
 
 	"github.com/spf13/cobra"
-	"github.com/viniciuschiele/decker/core"
+	"github.com/viniciuschiele/decker/config"
+	"github.com/viniciuschiele/decker/registry"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 var loginCommand = &cobra.Command{
 	Use:   "login",
-	Short: "Log in to a Decker registry server, if no server is specified \"https://registry.godecker.io/\" is the default.",
+	Short: "Log in to a Decker registry server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		server := ""
-
-		if len(args) > 0 {
-			server = args[0]
-		}
-
 		username := cmd.Flag("username").Value.String()
 		password := cmd.Flag("password").Value.String()
 
@@ -46,11 +41,14 @@ var loginCommand = &cobra.Command{
 			password = string(passwordInBytes)
 		}
 
-		err := core.Login(username, password, server)
+		token, err := registry.Login(username, password)
 
 		if err != nil {
 			return err
 		}
+
+		config.Set("token", token)
+		config.Save()
 
 		fmt.Println()
 		fmt.Println("Welcome!")

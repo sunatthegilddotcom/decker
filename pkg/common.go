@@ -1,9 +1,8 @@
-package core
+package pkg
 
 import (
 	"os"
 	"os/user"
-	"strings"
 )
 
 // GetOSUserFullname ...
@@ -53,44 +52,4 @@ func IsFile(path string) (bool, error) {
 	}
 
 	return true, nil
-}
-
-// CompactServer ...
-func CompactServer(server string) string {
-	server = strings.ToLower(strings.Trim(server, " "))
-
-	if server == "" {
-		return ""
-	}
-
-	if !strings.HasSuffix(server, "/") {
-		server += "/"
-	}
-
-	if server == DefaultServer {
-		return ""
-	}
-
-	return server
-}
-
-// ResolveServer ...
-func ResolveServer(server string) string {
-	server = strings.Trim(server, " ")
-
-	if server == "" {
-		server = Config.DefaultServer
-	}
-
-	if server == "" {
-		server = DefaultServer
-	}
-
-	server = strings.ToLower(server)
-
-	if !strings.HasSuffix(server, "/") {
-		server += "/"
-	}
-
-	return server
 }
